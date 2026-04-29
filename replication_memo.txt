@@ -1,1 +1,1 @@
-The push worked. Maybe. adding more. My comments on the Replication process will go here. 
+The replication files relied on a Stata do-file to set up the working directory and load the data into the environment. Despite this, the rest of the code (used to create the graphs, perform analysis) was in R. Since I did not have an app to read .do files pre-installed, I opted to push the replication files to the remote repository and use the displayed version of the .do file accessible through the web version of GitHub to rewrite the code in R.
