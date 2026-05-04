@@ -8,7 +8,7 @@
 ### Set-up ----
 ## Clean the working environment and set up the working directory
 rm(list = ls())
-setwd("~/Desktop/dynamic_backsliding/replication") # set your working directory here, which should also contain the survey data ("pretest_data.csv")
+#setwd("~/Desktop/dynamic_backsliding/replication") # set your working directory here, which should also contain the survey data ("pretest_data.csv")
 
 ## Import the dataset
 df <- read.csv("pretest_data.csv")
