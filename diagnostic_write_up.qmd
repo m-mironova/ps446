@@ -1,0 +1,91 @@
+---
+title: "Diagnostic"
+author: "Masha Mironova"
+format: pdf
+editor: visual
+---
+
+By far the biggest issue in using a balance table for this paper is the number of categorical variables in it: sex, race, state, etc. Though factorization is possible, it was not executed here, but would have enabled R to more accurately represent the data and measure all covariates, not just numerical data. Race would still have presented an issue, however, since for many individuals, there are multiple values listed. Potentially, this would still have been possible to adjust for. As it stands, the balance table reports the numerical demographic information on the experiment participants only.
+
+The code for the following table is accessible under the diagnostic.R file.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#load packages
+library(tidyverse)
+library(here)
+library(cobalt)
+
+# load data
+
+experimental_data <- read.csv(
+  here("yeung_replication_files/experimental_data.csv"))
+
+# create an easier-to-read treatment assignment variable
+# originally = Increasing Severity condition = 1; Decreasing
+#   Severity condition = 2; Sporadic Severity condition = 3; No Transgressions
+#   condition = 4
+# change to: No Transgressions (= no treatment) = 0, Other (= treatment) = 1
+
+exp_data_better <- experimental_data %>%
+  mutate(treatment = case_when(
+    exp_1 == 4 ~ 0,
+    exp_1 != 4 ~ 1
+  ))
+
+# generate balance table
+
+balance_table <- bal.tab(treatment ~ yob + educ + ideo + 
+                           policy_educ + policy_tax_V1 + 
+                           policy_tax_V2 + policy_immi + 
+                           policy_mari,
+                         data = exp_data_better,
+                         stats = c("m", "v", "ks.statistics"),
+                         un = TRUE)
+
+balance_table
+```
+
+I am unsure of where the <NA> covariate values appeared from, as they were not specified in the code used to create the balance table. As I am not clear on the meaning of these lines, they are ignored for the rest of the assignment. 
+
+The variables reported in the balance tables are as follows:
+
+| Variable Name | Meaning (from codebook) |
+|---------------|-------------------------|
+| yob | Respondent’s age (year 2006 = 1; year 1920 or before = 87). |
+| educ | Respondent’s highest level of school completed. |
+| ideo | Respondent’s self-reported ideology (more conservative = higher). |
+| policy_educ | Respondent’s policy position for education finance (more conservative = higher). |
+| policy_tax_V1, policy_tax_V2 | Respondent’s policy position for tax rate (more conservative = higher). [V2: for respondents residing in a state without a state income tax]. |
+| policy_immi | Respondent’s policy position for immigration (more conservative = higher). |
+| policy_mari | Respondent’s policy position for marijuana (more conservative = higher). |
+
+: Balance Table Variables
+
+The columns represent: Diff.Un = standardized mean difference, V.Ratio.Un = variance ratio, and KS.Un = Kolmogorov-Smirnov statistic. Note that all of these are unadjusted (.un), meaning that they use the raw data provided from the study's supplemental materials, with no matching, regression, accounting for confounders, or other manipulations performed on them. 
+
+Note that all standardized mean difference values (the difference in the mean between the control and treated groups) are within |x|=0.04, meaning that the randomization is relatively well balanced. That is, no treatment group is further than 0.04 standard deviations away from the control group on any of the specified covariates. 
+
+The variance ratio similarly is within the acceptable norm, where x belongs to [0.9858, 1.1162]. Given that 1 is perfect balance (where 1 means the treatment explains 100% of the variation between the treated and controlled groups), this is similarly good news for the study.
+
+Finally, the Kolmogorov-Smirnov statistic is also in good order, the biggest difference between the treated and untreated distribution, by covariate, is 0.0333 and the smallest is 0.0085. This also satisfies all the necessary conditions to trust the randomization of the study. 
+
+In sum, the balance tables report a level of confidence similar to the equivalence ratio table reported in the study.
+
+Links to major sources relied upon for this assignment:
+
+https://www.stat.berkeley.edu/\~s133/factors.html
+
+https://cran.r-project.org/web/packages/MatchIt/vignettes/assessing-balance.html
+
+https://lost-stats.github.io/Presentation/Tables/Balance_Tables.html 
+
+https://www.rdocumentation.org/packages/matchMulti/versions/1.1.12.1/topics/balanceTable
+
+https://cran.r-project.org/web/packages/cobalt/vignettes/cobalt.html https://ngreifer.r-universe.dev/cobalt
+
+https://pmc.ncbi.nlm.nih.gov/articles/PMC11562970/
+
+https://www.sciencedirect.com/topics/computer-science/variance-ratio
