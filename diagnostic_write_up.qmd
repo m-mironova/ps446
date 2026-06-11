@@ -5,6 +5,8 @@ format: pdf
 editor: visual
 ---
 
+This is also available at the following remote repository: https://github.com/m-mironova/ps446
+
 By far the biggest issue in using a balance table for this paper is the number of categorical variables in it: sex, race, state, etc. Though factorization is possible, it was not executed here, but would have enabled R to more accurately represent the data and measure all covariates, not just numerical data. Race would still have presented an issue, however, since for many individuals, there are multiple values listed. Potentially, this would still have been possible to adjust for. As it stands, the balance table reports the numerical demographic information on the experiment participants only.
 
 The code for the following table is accessible under the diagnostic.R file.
